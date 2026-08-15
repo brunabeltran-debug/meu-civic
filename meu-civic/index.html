@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Plano para o Meu Primeiro Carro — Civic G8</title>
+  <meta name="theme-color" content="#0b0d0c" />
+  <style>
+    :root{
+      --bg:#080a09;
+      --panel:#101411;
+      --panel2:#151a16;
+      --line:#263027;
+      --green:#90d43f;
+      --green2:#b8f26b;
+      --text:#f5f7f5;
+      --muted:#aab3ab;
+      --danger:#ff5e5e;
+      --gold:#f4c95d;
+      --shadow: 0 16px 48px rgba(0,0,0,.35);
+      --radius:22px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 10% 10%, rgba(144,212,63,.08), transparent 30%),
+        radial-gradient(circle at 90% 20%, rgba(144,212,63,.05), transparent 28%),
+        var(--bg);
+      color:var(--text);
+      min-height:100vh;
+    }
+    a{color:inherit}
+    .wrap{width:min(1180px,92vw);margin:0 auto 80px}
+
+    /* HERO */
+    .hero{
+      min-height:76vh;
+      display:flex;
+      align-items:flex-end;
+      position:relative;
+      border-radius:0 0 34px 34px;
+      overflow:hidden;
+      background:
+        linear-gradient(180deg, rgba(5,7,6,.26) 0%, rgba(5,7,6,.55) 42%, rgba(5,7,6,.98) 100%),
+        url('civic.jpg') center/cover no-repeat;
+      box-shadow:var(--shadow);
+    }
+    .hero::after{
+      content:"";
+      position:absolute; inset:0;
+      background:linear-gradient(90deg, rgba(0,0,0,.78), transparent 62%);
+      pointer-events:none;
+    }
+    .hero-inner{
+      position:relative; z-index:2;
+      width:min(1180px,92vw); margin:0 auto;
+      padding:88px 0 54px;
+    }
+    .eyebrow{
+      display:inline-flex; gap:8px; align-items:center;
+      font-size:.78rem; text-transform:uppercase; letter-spacing:.16em;
+      color:#d7f8b0; background:rgba(144,212,63,.12);
+      border:1px solid rgba(144,212,63,.38);
+      padding:9px 12px; border-radius:999px;
+    }
+    h1{
+      font-size:clamp(2.5rem,7vw,5.8rem);
+      line-height:.93;
+      margin:18px 0 16px;
+      letter-spacing:-.055em;
+      max-width:880px;
+    }
+    .hero-sub{
+      max-width:720px;
+      color:#d5dbd5;
+      font-size:clamp(1rem,2vw,1.18rem);
+      line-height:1.65;
+      margin-bottom:24px;
+    }
+    .hero-actions{display:flex;flex-wrap:wrap;gap:12px}
+    .btn{
+      appearance:none;border:0;cursor:pointer;text-decoration:none;
+      padding:13px 17px;border-radius:14px;font-weight:800;
+      background:var(--green);color:#071006;transition:.2s ease;
+      display:inline-flex;align-items:center;gap:8px;
+    }
+    .btn:hover{transform:translateY(-1px);filter:brightness(1.06)}
+    .btn.secondary{background:#171c18;color:white;border:1px solid #313a32}
+    .file-btn input{display:none}
+
+    /* TOP NAV */
+    .nav{
+      position:sticky;top:12px;z-index:30;
+      margin:-24px auto 28px;
+      width:min(980px,92vw);
+      background:rgba(15,19,16,.82);
+      backdrop-filter: blur(16px);
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:18px;
+      padding:10px;
+      display:flex;gap:8px;overflow-x:auto;
+      box-shadow:var(--shadow);
+    }
+    .nav a{
+      text-decoration:none;white-space:nowrap;
+      color:#cfd5cf;padding:9px 12px;border-radius:11px;font-size:.9rem;
+    }
+    .nav a:hover{background:#1b221c;color:white}
+
+    /* GENERIC */
+    .section{margin-top:34px}
+    .section-title{
+      display:flex;align-items:flex-end;justify-content:space-between;gap:20px;margin-bottom:14px
+    }
+    .section-title h2{font-size:clamp(1.45rem,3vw,2.2rem);margin:0;letter-spacing:-.03em}
+    .section-title p{margin:0;color:var(--muted);max-width:620px}
+    .grid{display:grid;gap:16px}
+    .grid-4{grid-template-columns:repeat(4,1fr)}
+    .grid-3{grid-template-columns:repeat(3,1fr)}
+    .grid-2{grid-template-columns:repeat(2,1fr)}
+    .card{
+      background:linear-gradient(180deg, rgba(255,255,255,.025), rgba(255,255,255,.012)), var(--panel);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:20px;
+      box-shadow:0 12px 30px rgba(0,0,0,.18);
+    }
+    .label{font-size:.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:.12em}
+    .big{font-size:2rem;font-weight:900;letter-spacing:-.035em;margin-top:7px}
+    .accent{color:var(--green2)}
+    .muted{color:var(--muted)}
+    .small{font-size:.88rem}
+    .divider{height:1px;background:var(--line);margin:16px 0}
+    .pill{display:inline-block;padding:6px 9px;border-radius:999px;background:#1b241b;border:1px solid #2f3a30;color:#dce5dc;font-size:.8rem}
+
+    /* PROGRESS */
+    .progress-shell{
+      width:100%;height:19px;border-radius:999px;background:#1b211c;overflow:hidden;
+      border:1px solid #29322a;margin:12px 0 8px;
+    }
+    .progress-bar{
+      height:100%;width:0%;
+      background:linear-gradient(90deg,#78ba31,#b8f26b);
+      transition:width .45s ease;border-radius:inherit;
+      position:relative;
+    }
+    .progress-bar::after{
+      content:""; position:absolute; inset:0;
+      background:linear-gradient(90deg,transparent,rgba(255,255,255,.28),transparent);
+      transform:translateX(-100%); animation:shine 3.4s infinite;
+    }
+    @keyframes shine{70%,100%{transform:translateX(100%)}}
+    .money-input{
+      width:100%;
+      background:#0b0f0c;border:1px solid #303932;color:white;
+      padding:12px 13px;border-radius:12px;font-size:1.05rem;outline:none;
+    }
+    .money-input:focus{border-color:var(--green)}
+    .input-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+    /* MONTHS */
+    .months{display:grid;gap:14px}
+    .month{
+      background:var(--panel);
+      border:1px solid var(--line);
+      border-radius:20px;
+      overflow:hidden;
+    }
+    .month-head{
+      display:grid;grid-template-columns:1fr auto auto auto;gap:16px;align-items:center;
+      padding:17px 20px;background:#121712;
+    }
+    .month-head strong{font-size:1.06rem}
+    .month-head span{color:var(--muted);font-size:.9rem}
+    .month-body{padding:16px 20px 18px}
+    .checkline{
+      display:flex;align-items:flex-start;gap:10px;padding:8px 0;color:#d9ded9
+    }
+    .checkline input{accent-color:var(--green);width:18px;height:18px;margin-top:2px}
+    .month.completed{border-color:rgba(144,212,63,.65);box-shadow:0 0 0 1px rgba(144,212,63,.15) inset}
+    .month.completed .month-head{background:rgba(144,212,63,.08)}
+    .month-status{font-weight:800;color:var(--green2)!important}
+
+    /* TABLE */
+    .table-wrap{overflow:auto;border-radius:16px;border:1px solid var(--line)}
+    table{width:100%;border-collapse:collapse;min-width:640px;background:#0f130f}
+    th,td{padding:13px 14px;border-bottom:1px solid #222b23;text-align:left}
+    th{font-size:.78rem;text-transform:uppercase;letter-spacing:.09em;color:#9faa9f;background:#121712}
+    tr:last-child td{border-bottom:0}
+    td strong{color:#f3f6f3}
+
+    /* CALCULATOR */
+    .sim-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:16px}
+    .calc-result{
+      display:flex;flex-direction:column;justify-content:center;min-height:100%;
+      background:linear-gradient(145deg,rgba(144,212,63,.12),rgba(144,212,63,.02));
+    }
+    .calc-result .big{font-size:2.5rem}
+
+    /* CHECKLIST */
+    .check-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px 20px}
+    .weekly-inputs{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
+    .field label{display:block;font-size:.78rem;color:var(--muted);margin-bottom:6px}
+    .field input{
+      width:100%;padding:11px 12px;border-radius:11px;background:#0b0f0c;
+      border:1px solid #303932;color:#fff;outline:none;
+    }
+    .field input:focus{border-color:var(--green)}
+
+    /* QUOTE */
+    .quote{
+      padding:30px;border-radius:24px;
+      background:
+        linear-gradient(120deg,rgba(144,212,63,.13),rgba(255,255,255,.01)),
+        #101410;
+      border:1px solid rgba(144,212,63,.3);
+      font-size:clamp(1.6rem,4vw,3.2rem);
+      line-height:1.08;font-weight:900;letter-spacing:-.04em;
+    }
+    footer{color:#758075;text-align:center;margin-top:42px;font-size:.85rem}
+
+    @media(max-width:900px){
+      .grid-4,.grid-3{grid-template-columns:repeat(2,1fr)}
+      .sim-grid,.grid-2{grid-template-columns:1fr}
+      .month-head{grid-template-columns:1fr 1fr}
+      .weekly-inputs{grid-template-columns:1fr 1fr}
+    }
+    @media(max-width:620px){
+      .hero{min-height:72vh}
+      .grid-4,.grid-3,.check-grid{grid-template-columns:1fr}
+      .input-row,.weekly-inputs{grid-template-columns:1fr}
+      .month-head{grid-template-columns:1fr}
+      .section-title{align-items:flex-start;flex-direction:column}
+      .big{font-size:1.7rem}
+    }
+  </style>
+</head>
+<body>
+
+  <!--
+    FOTO DO CIVIC:
+    1) Coloque este HTML e a foto na MESMA PASTA.
+    2) Renomeie a foto para: civic.jpg
+    3) Ou use o botão "Trocar foto" no topo.
+  -->
+
+  <header class="hero" id="topo">
+    <div class="hero-inner">
+      <span class="eyebrow">🖤 Projeto pessoal • Dezembro 2026</span>
+      <h1>Plano para o meu primeiro carro.</h1>
+      <p class="hero-sub">
+        Honda Civic G8 LXS • automático • preto. Meta construída apenas com as minhas comissões da Malinovski.
+        Cada fechamento me aproxima da chave.
+      </p>
+      <div class="hero-actions">
+        <a class="btn" href="#progresso">Ver meu progresso</a>
+        <label class="btn secondary file-btn">
+          📷 Trocar foto do Civic
+          <input type="file" id="photoInput" accept="image/*" />
+        </label>
+        <button class="btn secondary" id="resetBtn" type="button">↺ Resetar progresso</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="nav">
+    <a href="#progresso">Progresso</a>
+    <a href="#equacao">Equação</a>
+    <a href="#meses">Meses</a>
+    <a href="#simulador">Simulador</a>
+    <a href="#prioridades">Prioridades</a>
+    <a href="#semanal">Placar semanal</a>
+  </nav>
+
+  <main class="wrap">
+
+    <section class="section" id="progresso">
+      <div class="section-title">
+        <div>
+          <h2>Meu Fundo Civic</h2>
+          <p>Atualize o valor sempre que uma comissão cair. O navegador salva automaticamente.</p>
+        </div>
+        <span class="pill">Meta oficial: R$ 65.000</span>
+      </div>
+
+      <div class="grid grid-4">
+        <div class="card">
+          <div class="label">Meta mínima</div>
+          <div class="big">R$ 60.000</div>
+          <div class="small muted">Carro à vista</div>
+        </div>
+        <div class="card">
+          <div class="label">Meta tranquila</div>
+          <div class="big accent">R$ 65.000</div>
+          <div class="small muted">Carro + margem inicial</div>
+        </div>
+        <div class="card">
+          <div class="label">Empresas-alvo</div>
+          <div class="big">40</div>
+          <div class="small muted">≈ 2 por semana</div>
+        </div>
+        <div class="card">
+          <div class="label">Bônus possíveis</div>
+          <div class="big">R$ 6.000</div>
+          <div class="small muted">4 × R$ 1.500</div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:16px">
+        <div class="input-row">
+          <div>
+            <div class="label">Quanto já está no Fundo Civic?</div>
+            <input class="money-input" id="currentFund" type="number" min="0" step="0.01" value="0" />
+          </div>
+          <div>
+            <div class="label">Quantas empresas já fechei?</div>
+            <input class="money-input" id="companyCount" type="number" min="0" step="1" value="0" />
+          </div>
+        </div>
+
+        <div class="progress-shell"><div class="progress-bar" id="mainProgress"></div></div>
+        <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap">
+          <strong id="progressText">0% da meta</strong>
+          <span class="muted" id="remainingText">Faltam R$ 65.000</span>
+        </div>
+
+        <div class="grid grid-3" style="margin-top:18px">
+          <div>
+            <div class="label">Próximo bônus</div>
+            <div class="big" id="nextBonus">10 empresas</div>
+          </div>
+          <div>
+            <div class="label">Bônus conquistados</div>
+            <div class="big" id="bonusEarned">R$ 0</div>
+          </div>
+          <div>
+            <div class="label">Empresas restantes até 40</div>
+            <div class="big" id="companiesRemaining">40</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="equacao">
+      <div class="section-title">
+        <div>
+          <h2>A equação do Civic</h2>
+          <p>O plano foi desenhado para buscar ticket médio alto e priorizar negócios de base a 2%.</p>
+        </div>
+      </div>
+
+      <div class="grid grid-4">
+        <div class="card"><div class="label">40 empresas</div><div class="big">40</div><div class="small muted">meta total</div></div>
+        <div class="card"><div class="label">Ticket médio</div><div class="big">R$ 73.750</div><div class="small muted">por empresa</div></div>
+        <div class="card"><div class="label">Volume vendido</div><div class="big">R$ 2,95 mi</div><div class="small muted">40 × 73.750</div></div>
+        <div class="card"><div class="label">Resultado</div><div class="big accent">R$ 65.000</div><div class="small muted">59 mil + 6 mil bônus</div></div>
+      </div>
+      <div class="card" style="margin-top:16px">
+        <strong>Conta completa:</strong>
+        <p class="muted">R$ 2.950.000 vendidos × 2% = <strong style="color:white">R$ 59.000</strong> em comissão + 4 bônus de R$ 1.500 = <strong class="accent">R$ 65.000.</strong></p>
+      </div>
+    </section>
+
+    <section class="section" id="meses">
+      <div class="section-title">
+        <div>
+          <h2>Rota até dezembro</h2>
+          <p>Dê check conforme cumprir cada etapa. O status de cada mês muda automaticamente.</p>
+        </div>
+      </div>
+
+      <div class="months">
+        <article class="month" data-month="agosto">
+          <div class="month-head">
+            <strong>Agosto 2026</strong>
+            <span>4 empresas</span><span>Meta: R$ 5.900</span><span class="month-status">Em andamento</span>
+          </div>
+          <div class="month-body">
+            <label class="checkline"><input type="checkbox" data-save="agosto_1"> Fechar 4 empresas no mês.</label>
+            <label class="checkline"><input type="checkbox" data-save="agosto_2"> Buscar pelo menos 1 venda de ticket alto.</label>
+            <label class="checkline"><input type="checkbox" data-save="agosto_3"> Direcionar 100% das novas comissões para o Fundo Civic.</label>
+            <label class="checkline"><input type="checkbox" data-save="agosto_4"> Encerrar o mês com R$ 5.900 acumulados.</label>
+          </div>
+        </article>
+
+        <article class="month" data-month="setembro">
+          <div class="month-head">
+            <strong>Setembro 2026</strong>
+            <span>+9 empresas</span><span>Meta acumulada: R$ 20.675</span><span class="month-status">A fazer</span>
+          </div>
+          <div class="month-body">
+            <label class="checkline"><input type="checkbox" data-save="setembro_1"> Fechar 9 empresas.</label>
+            <label class="checkline"><input type="checkbox" data-save="setembro_2"> Atingir o primeiro bloco de 10 empresas e garantir R$ 1.500 de bônus.</label>
+            <label class="checkline"><input type="checkbox" data-save="setembro_3"> Trabalhar upsell de merchandising em expositores já fechados.</label>
+            <label class="checkline"><input type="checkbox" data-save="setembro_4"> Chegar a R$ 20.675 acumulados.</label>
+          </div>
+        </article>
+
+        <article class="month" data-month="outubro">
+          <div class="month-head">
+            <strong>Outubro 2026</strong>
+            <span>+9 empresas</span><span>Meta acumulada: R$ 35.450</span><span class="month-status">A fazer</span>
+          </div>
+          <div class="month-body">
+            <label class="checkline"><input type="checkbox" data-save="outubro_1"> Fechar 9 empresas.</label>
+            <label class="checkline"><input type="checkbox" data-save="outubro_2"> Buscar mais um bônus de R$ 1.500.</label>
+            <label class="checkline"><input type="checkbox" data-save="outubro_3"> Priorizar áreas de R$ 73 mil ou mais.</label>
+            <label class="checkline"><input type="checkbox" data-save="outubro_4"> Chegar a R$ 35.450 acumulados.</label>
+          </div>
+        </article>
+
+        <article class="month" data-month="novembro">
+          <div class="month-head">
+            <strong>Novembro 2026</strong>
+            <span>+9 empresas</span><span>Meta acumulada: R$ 50.225</span><span class="month-status">A fazer</span>
+          </div>
+          <div class="month-body">
+            <label class="checkline"><input type="checkbox" data-save="novembro_1"> Fechar 9 empresas.</label>
+            <label class="checkline"><input type="checkbox" data-save="novembro_2"> Conquistar o terceiro bônus de R$ 1.500.</label>
+            <label class="checkline"><input type="checkbox" data-save="novembro_3"> Fazer uma rodada forte de follow-up nos leads quentes.</label>
+            <label class="checkline"><input type="checkbox" data-save="novembro_4"> Chegar a R$ 50.225 acumulados.</label>
+          </div>
+        </article>
+
+        <article class="month" data-month="dezembro">
+          <div class="month-head">
+            <strong>Dezembro 2026</strong>
+            <span>+9 empresas</span><span>Meta final: R$ 65.000</span><span class="month-status">A fazer</span>
+          </div>
+          <div class="month-body">
+            <label class="checkline"><input type="checkbox" data-save="dezembro_1"> Fechar as últimas 9 empresas da meta.</label>
+            <label class="checkline"><input type="checkbox" data-save="dezembro_2"> Completar 40 empresas e garantir o quarto bônus de R$ 1.500.</label>
+            <label class="checkline"><input type="checkbox" data-save="dezembro_3"> Atingir R$ 60.000 — meta mínima.</label>
+            <label class="checkline"><input type="checkbox" data-save="dezembro_4"> Atingir R$ 65.000 — meta tranquila.</label>
+            <label class="checkline"><input type="checkbox" data-save="dezembro_5"> Começar a procurar o Civic certo, sem comprar por impulso.</label>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="simulador">
+      <div class="section-title">
+        <div>
+          <h2>Simulador de fechamento</h2>
+          <p>Antes de fechar um contrato, veja quanto daquela venda vai direto para o Civic.</p>
+        </div>
+      </div>
+      <div class="sim-grid">
+        <div class="card">
+          <div class="field">
+            <label>Valor do contrato (R$)</label>
+            <input id="contractValue" type="number" min="0" step="100" value="59000" />
+          </div>
+          <div class="field" style="margin-top:12px">
+            <label>Percentual de comissão</label>
+            <select id="commissionRate" class="money-input">
+              <option value="0.02">2% — Base / prospecção própria</option>
+              <option value="0.01">1% — Anúncio / info</option>
+            </select>
+          </div>
+          <div class="divider"></div>
+          <div class="small muted">Dica: para o Plano Civic, o objetivo é aumentar a participação dos negócios de base a 2% sempre que possível.</div>
+        </div>
+        <div class="card calc-result">
+          <div class="label">Esta venda coloca no Civic</div>
+          <div class="big accent" id="commissionResult">R$ 1.180,00</div>
+          <div class="small muted" id="civicPercent">1,82% da meta de R$ 65 mil</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="prioridades">
+      <div class="section-title">
+        <div>
+          <h2>Mapa de prioridades comerciais</h2>
+          <p>Produtos com maior capacidade de acelerar a meta.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="label">Áreas dinâmicas • comissão estimada a 2%</div>
+        <div class="table-wrap" style="margin-top:12px">
+          <table>
+            <thead><tr><th>Valor da venda</th><th>Comissão 2%</th><th>Quanto representa da meta</th></tr></thead>
+            <tbody>
+              <tr><td>R$ 59.000</td><td><strong>R$ 1.180</strong></td><td>1,82%</td></tr>
+              <tr><td>R$ 73.000</td><td><strong>R$ 1.460</strong></td><td>2,25%</td></tr>
+              <tr><td>R$ 105.000</td><td><strong>R$ 2.100</strong></td><td>3,23%</td></tr>
+              <tr><td>R$ 139.000</td><td><strong>R$ 2.780</strong></td><td>4,28%</td></tr>
+              <tr><td>R$ 201.000</td><td><strong>R$ 4.020</strong></td><td>6,18%</td></tr>
+              <tr><td>R$ 280.000</td><td><strong>R$ 5.600</strong></td><td>8,62%</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="grid grid-3" style="margin-top:16px">
+        <div class="card">
+          <div class="label">Prioridade 1</div>
+          <div class="big">Áreas dinâmicas</div>
+          <p class="muted small">Tickets de R$ 59 mil a R$ 280 mil. Uma venda grande pode substituir várias vendas pequenas.</p>
+        </div>
+        <div class="card">
+          <div class="label">Prioridade 2</div>
+          <div class="big">Áreas estáticas</div>
+          <p class="muted small">Foco especial nas faixas de R$ 58,5 mil, R$ 73 mil, R$ 89 mil, R$ 105 mil, R$ 125 mil e R$ 155 mil.</p>
+        </div>
+        <div class="card">
+          <div class="label">Prioridade 3</div>
+          <div class="big">Merchan como upsell</div>
+          <p class="muted small">Newsletter, balões, bandeirolas, banner em veículos, máquina em destaque, outdoor e outras ações para elevar o ticket.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="semanal">
+      <div class="section-title">
+        <div>
+          <h2>Meu placar semanal</h2>
+          <p>Preencha toda sexta-feira. Não acompanhe só quantidade: acompanhe ticket e comissão.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="weekly-inputs">
+          <div class="field"><label>Empresas fechadas na semana</label><input data-local="week_closed" type="number" min="0"></div>
+          <div class="field"><label>Valor vendido (R$)</label><input data-local="week_sold" type="number" min="0"></div>
+          <div class="field"><label>Ticket médio (R$)</label><input data-local="week_ticket" type="number" min="0"></div>
+          <div class="field"><label>Comissão gerada (R$)</label><input data-local="week_commission" type="number" min="0"></div>
+          <div class="field"><label>Total no Fundo Civic (R$)</label><input data-local="week_fund" type="number" min="0"></div>
+          <div class="field"><label>Leads quentes para próxima semana</label><input data-local="week_hot" type="number" min="0"></div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="check-grid">
+          <label class="checkline"><input type="checkbox" data-save="weekly_1"> Fiz follow-up dos leads mais quentes.</label>
+          <label class="checkline"><input type="checkbox" data-save="weekly_2"> Busquei pelo menos uma venda de ticket alto.</label>
+          <label class="checkline"><input type="checkbox" data-save="weekly_3"> Tentei upsell de merchandising.</label>
+          <label class="checkline"><input type="checkbox" data-save="weekly_4"> Atualizei meu Fundo Civic.</label>
+          <label class="checkline"><input type="checkbox" data-save="weekly_5"> Sei quantas empresas faltam para o próximo bônus.</label>
+          <label class="checkline"><input type="checkbox" data-save="weekly_6"> Mantive 100% das comissões destinadas ao carro.</label>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="quote">
+        “Foi a Bruna que vendeu esse Civic para ela mesma.” 🖤
+      </div>
+    </section>
+
+    <footer>
+      Plano Civic G8 • Agosto → Dezembro de 2026 • dados salvos somente neste navegador
+    </footer>
+  </main>
+
+  <script>
+    const META = 65000;
+    const COMPANY_META = 40;
+
+    const brl = v => Number(v || 0).toLocaleString('pt-BR', {style:'currency', currency:'BRL'});
+
+    const fund = document.getElementById('currentFund');
+    const companies = document.getElementById('companyCount');
+    const progress = document.getElementById('mainProgress');
+    const progressText = document.getElementById('progressText');
+    const remainingText = document.getElementById('remainingText');
+    const nextBonus = document.getElementById('nextBonus');
+    const bonusEarned = document.getElementById('bonusEarned');
+    const companiesRemaining = document.getElementById('companiesRemaining');
+
+    function refreshDashboard(){
+      const current = Math.max(0, Number(fund.value || 0));
+      const count = Math.max(0, Math.floor(Number(companies.value || 0)));
+      const pct = Math.min(100, (current / META) * 100);
+      progress.style.width = pct + '%';
+      progressText.textContent = pct.toFixed(1).replace('.', ',') + '% da meta';
+      remainingText.textContent = current >= META ? 'META ATINGIDA 🖤' : 'Faltam ' + brl(META-current);
+
+      const earnedBlocks = Math.floor(count/10);
+      bonusEarned.textContent = brl(earnedBlocks * 1500);
+
+      const next = count >= COMPANY_META ? 0 : (10 - (count % 10 || (count > 0 ? 10 : 0)));
+      if(count === 0) nextBonus.textContent = '10 empresas';
+      else if(count >= COMPANY_META) nextBonus.textContent = 'Meta completa';
+      else nextBonus.textContent = next + (next === 1 ? ' empresa' : ' empresas');
+
+      companiesRemaining.textContent = Math.max(0, COMPANY_META-count);
+
+      localStorage.setItem('civic_fund', current);
+      localStorage.setItem('civic_companies', count);
+    }
+
+    fund.value = localStorage.getItem('civic_fund') || 0;
+    companies.value = localStorage.getItem('civic_companies') || 0;
+    fund.addEventListener('input', refreshDashboard);
+    companies.addEventListener('input', refreshDashboard);
+
+    // Checkboxes
+    document.querySelectorAll('[data-save]').forEach(el=>{
+      const key='civic_'+el.dataset.save;
+      el.checked = localStorage.getItem(key)==='1';
+      el.addEventListener('change', ()=>{
+        localStorage.setItem(key, el.checked ? '1':'0');
+        updateMonths();
+      });
+    });
+
+    // Weekly numeric inputs
+    document.querySelectorAll('[data-local]').forEach(el=>{
+      const key='civic_'+el.dataset.local;
+      el.value = localStorage.getItem(key) || '';
+      el.addEventListener('input', ()=> localStorage.setItem(key, el.value));
+    });
+
+    function updateMonths(){
+      document.querySelectorAll('.month').forEach(month=>{
+        const checks=[...month.querySelectorAll('input[type="checkbox"]')];
+        const done=checks.every(c=>c.checked);
+        month.classList.toggle('completed', done);
+        month.querySelector('.month-status').textContent = done ? 'Concluído ✓' : (month.dataset.month==='agosto' ? 'Em andamento' : 'A fazer');
+      });
+    }
+
+    // Simulator
+    const contractValue = document.getElementById('contractValue');
+    const commissionRate = document.getElementById('commissionRate');
+    const commissionResult = document.getElementById('commissionResult');
+    const civicPercent = document.getElementById('civicPercent');
+
+    function calculateCommission(){
+      const value = Number(contractValue.value || 0);
+      const rate = Number(commissionRate.value || 0);
+      const commission = value * rate;
+      commissionResult.textContent = brl(commission);
+      civicPercent.textContent = ((commission/META)*100).toFixed(2).replace('.', ',') + '% da meta de R$ 65 mil';
+    }
+    contractValue.addEventListener('input', calculateCommission);
+    commissionRate.addEventListener('change', calculateCommission);
+
+    // Photo picker
+    const photoInput = document.getElementById('photoInput');
+    photoInput.addEventListener('change', e=>{
+      const file=e.target.files[0];
+      if(!file) return;
+      if(file.size > 3.5*1024*1024){
+        alert('Para salvar a foto no navegador, use uma imagem com até aproximadamente 3,5 MB.');
+        return;
+      }
+      const reader=new FileReader();
+      reader.onload=()=>{
+        document.querySelector('.hero').style.backgroundImage =
+          `linear-gradient(180deg, rgba(5,7,6,.26) 0%, rgba(5,7,6,.55) 42%, rgba(5,7,6,.98) 100%), url("${reader.result}")`;
+        try { localStorage.setItem('civic_photo', reader.result); } catch(e) {}
+      };
+      reader.readAsDataURL(file);
+    });
+
+    const savedPhoto=localStorage.getItem('civic_photo');
+    if(savedPhoto){
+      document.querySelector('.hero').style.backgroundImage =
+        `linear-gradient(180deg, rgba(5,7,6,.26) 0%, rgba(5,7,6,.55) 42%, rgba(5,7,6,.98) 100%), url("${savedPhoto}")`;
+    }
+
+    // Reset
+    document.getElementById('resetBtn').addEventListener('click', ()=>{
+      if(confirm('Tem certeza que quer apagar TODO o progresso salvo deste Plano Civic?')){
+        Object.keys(localStorage).filter(k=>k.startsWith('civic_')).forEach(k=>localStorage.removeItem(k));
+        location.reload();
+      }
+    });
+
+    refreshDashboard();
+    calculateCommission();
+    updateMonths();
+  </script>
+</body>
+</html>
