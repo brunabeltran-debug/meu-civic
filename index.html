@@ -210,6 +210,53 @@
     }
     .field input:focus{border-color:var(--green)}
 
+
+    /* WEEKLY HISTORY */
+    .history-toolbar{
+      display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:14px;
+    }
+    .history-list{display:grid;gap:12px}
+    .week-card{
+      background:#0f130f;border:1px solid var(--line);border-radius:16px;padding:16px;
+      display:grid;grid-template-columns:1.1fr repeat(4,.8fr) auto;gap:12px;align-items:center;
+    }
+    .week-card .wk-title{font-weight:900}
+    .week-card .wk-meta{font-size:.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+    .week-card .wk-value{font-weight:800;margin-top:3px}
+    .week-actions{display:flex;gap:8px}
+    .icon-btn{
+      border:1px solid #313a32;background:#171c18;color:white;border-radius:10px;
+      padding:8px 10px;cursor:pointer
+    }
+    .icon-btn:hover{border-color:var(--green)}
+    .empty-state{
+      color:var(--muted);text-align:center;padding:26px;border:1px dashed #334034;border-radius:14px
+    }
+    .chart-box{
+      background:#0f130f;border:1px solid var(--line);border-radius:18px;padding:16px;margin-top:16px
+    }
+    canvas{max-width:100%;display:block}
+    .modal-backdrop{
+      display:none;position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:100;
+      align-items:center;justify-content:center;padding:20px
+    }
+    .modal-backdrop.open{display:flex}
+    .modal{
+      width:min(620px,96vw);background:#0f130f;border:1px solid #303932;border-radius:20px;
+      padding:20px;box-shadow:var(--shadow)
+    }
+    .modal-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}
+    .modal-head h3{margin:0;font-size:1.4rem}
+    .modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    @media(max-width:900px){
+      .week-card{grid-template-columns:1fr 1fr}
+      .week-actions{grid-column:1/-1}
+    }
+    @media(max-width:620px){
+      .modal-grid{grid-template-columns:1fr}
+      .week-card{grid-template-columns:1fr}
+    }
+
     /* QUOTE */
     .quote{
       padding:30px;border-radius:24px;
@@ -272,7 +319,7 @@
     <a href="#meses">Meses</a>
     <a href="#simulador">Simulador</a>
     <a href="#prioridades">Prioridades</a>
-    <a href="#semanal">Placar semanal</a>
+    <a href="#semanal">Histórico semanal</a>
   </nav>
 
   <main class="wrap">
@@ -516,36 +563,83 @@
       </div>
     </section>
 
+    
     <section class="section" id="semanal">
       <div class="section-title">
         <div>
           <h2>Meu placar semanal</h2>
-          <p>Preencha toda sexta-feira. Não acompanhe só quantidade: acompanhe ticket e comissão.</p>
+          <p>Agora cada semana vira um registro separado. Você consegue acompanhar sua evolução até dezembro.</p>
         </div>
       </div>
 
       <div class="card">
-        <div class="weekly-inputs">
-          <div class="field"><label>Empresas fechadas na semana</label><input data-local="week_closed" type="number" min="0"></div>
-          <div class="field"><label>Valor vendido (R$)</label><input data-local="week_sold" type="number" min="0"></div>
-          <div class="field"><label>Ticket médio (R$)</label><input data-local="week_ticket" type="number" min="0"></div>
-          <div class="field"><label>Comissão gerada (R$)</label><input data-local="week_commission" type="number" min="0"></div>
-          <div class="field"><label>Total no Fundo Civic (R$)</label><input data-local="week_fund" type="number" min="0"></div>
-          <div class="field"><label>Leads quentes para próxima semana</label><input data-local="week_hot" type="number" min="0"></div>
+        <div class="history-toolbar">
+          <button class="btn" id="addWeekBtn" type="button">+ Adicionar semana</button>
+          <button class="btn secondary" id="exportWeeksBtn" type="button">Exportar histórico</button>
+          <label class="btn secondary file-btn">
+            Importar histórico
+            <input type="file" id="importWeeksInput" accept=".json,application/json" />
+          </label>
         </div>
 
-        <div class="divider"></div>
+        <div id="weeklyHistory" class="history-list"></div>
 
-        <div class="check-grid">
-          <label class="checkline"><input type="checkbox" data-save="weekly_1"> Fiz follow-up dos leads mais quentes.</label>
-          <label class="checkline"><input type="checkbox" data-save="weekly_2"> Busquei pelo menos uma venda de ticket alto.</label>
-          <label class="checkline"><input type="checkbox" data-save="weekly_3"> Tentei upsell de merchandising.</label>
-          <label class="checkline"><input type="checkbox" data-save="weekly_4"> Atualizei meu Fundo Civic.</label>
-          <label class="checkline"><input type="checkbox" data-save="weekly_5"> Sei quantas empresas faltam para o próximo bônus.</label>
-          <label class="checkline"><input type="checkbox" data-save="weekly_6"> Mantive 100% das comissões destinadas ao carro.</label>
+        <div class="chart-box">
+          <div class="label">Evolução do Fundo Civic</div>
+          <canvas id="fundChart" width="1000" height="360" aria-label="Gráfico de evolução do Fundo Civic"></canvas>
         </div>
       </div>
     </section>
+
+    <div class="modal-backdrop" id="weekModal">
+      <div class="modal">
+        <div class="modal-head">
+          <h3 id="weekModalTitle">Adicionar semana</h3>
+          <button class="icon-btn" id="closeWeekModal" type="button">✕</button>
+        </div>
+
+        <div class="modal-grid">
+          <div class="field">
+            <label>Data inicial</label>
+            <input id="weekStart" type="date">
+          </div>
+          <div class="field">
+            <label>Data final</label>
+            <input id="weekEnd" type="date">
+          </div>
+          <div class="field">
+            <label>Empresas fechadas</label>
+            <input id="weekCompanies" type="number" min="0" step="1" value="0">
+          </div>
+          <div class="field">
+            <label>Valor vendido (R$)</label>
+            <input id="weekSold" type="number" min="0" step="100" value="0">
+          </div>
+          <div class="field">
+            <label>Comissão gerada (R$)</label>
+            <input id="weekCommission" type="number" min="0" step="0.01" value="0">
+          </div>
+          <div class="field">
+            <label>Fundo Civic acumulado (R$)</label>
+            <input id="weekFundAccum" type="number" min="0" step="0.01" value="0">
+          </div>
+          <div class="field">
+            <label>Leads quentes</label>
+            <input id="weekHotLeads" type="number" min="0" step="1" value="0">
+          </div>
+          <div class="field">
+            <label>Observação</label>
+            <input id="weekNote" type="text" placeholder="Ex.: fechei uma área dinâmica">
+          </div>
+        </div>
+
+        <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px">
+          <button class="btn secondary" id="cancelWeekBtn" type="button">Cancelar</button>
+          <button class="btn" id="saveWeekBtn" type="button">Salvar semana</button>
+        </div>
+      </div>
+    </div>
+
 
     <section class="section">
       <div class="quote">
@@ -554,7 +648,7 @@
     </section>
 
     <footer>
-      Plano Civic G8 • Agosto → Dezembro de 2026 • dados salvos somente neste navegador
+      Plano Civic G8 • Agosto → Dezembro de 2026 • histórico semanal + exportação de backup
     </footer>
   </main>
 
@@ -665,6 +759,249 @@
       document.querySelector('.hero').style.backgroundImage =
         `linear-gradient(180deg, rgba(5,7,6,.26) 0%, rgba(5,7,6,.55) 42%, rgba(5,7,6,.98) 100%), url("${savedPhoto}")`;
     }
+
+
+    // Histórico semanal
+    const WEEK_KEY = 'civic_weekly_history_v2';
+    const weeklyHistory = document.getElementById('weeklyHistory');
+    const weekModal = document.getElementById('weekModal');
+    const addWeekBtn = document.getElementById('addWeekBtn');
+    const closeWeekModal = document.getElementById('closeWeekModal');
+    const cancelWeekBtn = document.getElementById('cancelWeekBtn');
+    const saveWeekBtn = document.getElementById('saveWeekBtn');
+    const exportWeeksBtn = document.getElementById('exportWeeksBtn');
+    const importWeeksInput = document.getElementById('importWeeksInput');
+
+    const weekStart = document.getElementById('weekStart');
+    const weekEnd = document.getElementById('weekEnd');
+    const weekCompanies = document.getElementById('weekCompanies');
+    const weekSold = document.getElementById('weekSold');
+    const weekCommission = document.getElementById('weekCommission');
+    const weekFundAccum = document.getElementById('weekFundAccum');
+    const weekHotLeads = document.getElementById('weekHotLeads');
+    const weekNote = document.getElementById('weekNote');
+    const weekModalTitle = document.getElementById('weekModalTitle');
+
+    let editingWeekId = null;
+
+    function loadWeeks(){
+      try { return JSON.parse(localStorage.getItem(WEEK_KEY) || '[]'); }
+      catch(e){ return []; }
+    }
+    function saveWeeks(weeks){
+      localStorage.setItem(WEEK_KEY, JSON.stringify(weeks));
+      renderWeeks();
+      drawFundChart();
+    }
+    function formatDateBR(dateStr){
+      if(!dateStr) return '—';
+      const [y,m,d] = dateStr.split('-');
+      return `${d}/${m}/${y}`;
+    }
+    function openWeekModal(week=null){
+      editingWeekId = week?.id || null;
+      weekModalTitle.textContent = week ? 'Editar semana' : 'Adicionar semana';
+      weekStart.value = week?.start || '';
+      weekEnd.value = week?.end || '';
+      weekCompanies.value = week?.companies ?? 0;
+      weekSold.value = week?.sold ?? 0;
+      weekCommission.value = week?.commission ?? 0;
+      weekFundAccum.value = week?.fund ?? Number(fund.value || 0);
+      weekHotLeads.value = week?.hot ?? 0;
+      weekNote.value = week?.note || '';
+      weekModal.classList.add('open');
+    }
+    function closeModal(){
+      weekModal.classList.remove('open');
+      editingWeekId = null;
+    }
+    addWeekBtn.addEventListener('click', ()=>openWeekModal());
+    closeWeekModal.addEventListener('click', closeModal);
+    cancelWeekBtn.addEventListener('click', closeModal);
+    weekModal.addEventListener('click', e=>{ if(e.target===weekModal) closeModal(); });
+
+    saveWeekBtn.addEventListener('click', ()=>{
+      if(!weekStart.value || !weekEnd.value){
+        alert('Preencha a data inicial e a data final da semana.');
+        return;
+      }
+      const weeks = loadWeeks();
+      const record = {
+        id: editingWeekId || Date.now(),
+        start: weekStart.value,
+        end: weekEnd.value,
+        companies: Math.max(0, Number(weekCompanies.value || 0)),
+        sold: Math.max(0, Number(weekSold.value || 0)),
+        commission: Math.max(0, Number(weekCommission.value || 0)),
+        fund: Math.max(0, Number(weekFundAccum.value || 0)),
+        hot: Math.max(0, Number(weekHotLeads.value || 0)),
+        note: weekNote.value.trim()
+      };
+      const idx = weeks.findIndex(w=>w.id===record.id);
+      if(idx>=0) weeks[idx]=record; else weeks.push(record);
+      weeks.sort((a,b)=>a.start.localeCompare(b.start));
+      saveWeeks(weeks);
+
+      // sincroniza o valor geral com o maior acumulado registrado
+      const maxFund = Math.max(Number(fund.value||0), ...weeks.map(w=>Number(w.fund||0)));
+      fund.value = maxFund;
+      refreshDashboard();
+      closeModal();
+    });
+
+    function renderWeeks(){
+      const weeks = loadWeeks();
+      if(!weeks.length){
+        weeklyHistory.innerHTML = '<div class="empty-state">Nenhuma semana registrada ainda. Clique em <strong>+ Adicionar semana</strong> para começar.</div>';
+        return;
+      }
+      weeklyHistory.innerHTML = weeks.map(w=>{
+        const ticket = w.companies > 0 ? w.sold / w.companies : 0;
+        return `
+          <div class="week-card">
+            <div>
+              <div class="wk-title">${formatDateBR(w.start)} → ${formatDateBR(w.end)}</div>
+              <div class="small muted">${w.note ? w.note : 'Semana registrada'}</div>
+            </div>
+            <div><div class="wk-meta">Empresas</div><div class="wk-value">${w.companies}</div></div>
+            <div><div class="wk-meta">Vendido</div><div class="wk-value">${brl(w.sold)}</div></div>
+            <div><div class="wk-meta">Comissão</div><div class="wk-value">${brl(w.commission)}</div></div>
+            <div><div class="wk-meta">Fundo Civic</div><div class="wk-value accent">${brl(w.fund)}</div></div>
+            <div class="week-actions">
+              <button class="icon-btn" data-edit-week="${w.id}" type="button">Editar</button>
+              <button class="icon-btn" data-delete-week="${w.id}" type="button">Excluir</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      document.querySelectorAll('[data-edit-week]').forEach(btn=>{
+        btn.addEventListener('click', ()=>{
+          const id = Number(btn.dataset.editWeek);
+          openWeekModal(loadWeeks().find(w=>w.id===id));
+        });
+      });
+      document.querySelectorAll('[data-delete-week]').forEach(btn=>{
+        btn.addEventListener('click', ()=>{
+          const id = Number(btn.dataset.deleteWeek);
+          if(confirm('Excluir esta semana do histórico?')){
+            saveWeeks(loadWeeks().filter(w=>w.id!==id));
+          }
+        });
+      });
+    }
+
+    function drawFundChart(){
+      const canvas = document.getElementById('fundChart');
+      if(!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const dpr = window.devicePixelRatio || 1;
+      const cssW = canvas.clientWidth || 1000;
+      const cssH = 360;
+      canvas.width = cssW * dpr;
+      canvas.height = cssH * dpr;
+      ctx.setTransform(dpr,0,0,dpr,0,0);
+      ctx.clearRect(0,0,cssW,cssH);
+
+      const weeks = loadWeeks();
+      const pad = {l:64,r:18,t:24,b:44};
+      const w = cssW-pad.l-pad.r;
+      const h = cssH-pad.t-pad.b;
+      const maxY = 65000;
+
+      ctx.font = '12px system-ui';
+      ctx.fillStyle = '#8f9a90';
+      ctx.strokeStyle = '#273128';
+      ctx.lineWidth = 1;
+
+      [0,15000,30000,45000,60000,65000].forEach(v=>{
+        const y = pad.t + h - (v/maxY)*h;
+        ctx.beginPath(); ctx.moveTo(pad.l,y); ctx.lineTo(cssW-pad.r,y); ctx.stroke();
+        ctx.fillText('R$ ' + (v/1000).toFixed(0) + 'k', 8, y+4);
+      });
+
+      if(!weeks.length){
+        ctx.fillStyle='#8f9a90';
+        ctx.font='14px system-ui';
+        ctx.fillText('Adicione semanas para visualizar a evolução.', pad.l+10, pad.t+40);
+        return;
+      }
+
+      const points = weeks.map((wk,i)=>{
+        const x = weeks.length===1 ? pad.l+w/2 : pad.l + (i/(weeks.length-1))*w;
+        const y = pad.t + h - (Math.min(maxY, Number(wk.fund||0))/maxY)*h;
+        return {x,y,wk};
+      });
+
+      // target line
+      ctx.strokeStyle = '#6b7b6d';
+      ctx.setLineDash([6,6]);
+      ctx.beginPath();
+      ctx.moveTo(pad.l,pad.t);
+      ctx.lineTo(cssW-pad.r,pad.t);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle='#aab3ab';
+      ctx.fillText('Meta R$ 65 mil', cssW-112, pad.t-7);
+
+      // growth line
+      ctx.strokeStyle = '#9fe352';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      points.forEach((p,i)=> i===0 ? ctx.moveTo(p.x,p.y) : ctx.lineTo(p.x,p.y));
+      ctx.stroke();
+
+      points.forEach(p=>{
+        ctx.fillStyle='#b8f26b';
+        ctx.beginPath();ctx.arc(p.x,p.y,5,0,Math.PI*2);ctx.fill();
+      });
+
+      // x labels
+      ctx.fillStyle='#8f9a90';
+      ctx.font='11px system-ui';
+      points.forEach((p,i)=>{
+        if(points.length>8 && i%2===1) return;
+        const label = formatDateBR(p.wk.end).slice(0,5);
+        ctx.fillText(label, Math.max(pad.l, p.x-16), cssH-18);
+      });
+    }
+
+    exportWeeksBtn.addEventListener('click', ()=>{
+      const payload = {
+        exportedAt: new Date().toISOString(),
+        fund: Number(fund.value||0),
+        companies: Number(companies.value||0),
+        weeks: loadWeeks()
+      };
+      const blob = new Blob([JSON.stringify(payload,null,2)], {type:'application/json'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href=url; a.download='plano-civic-historico.json'; a.click();
+      URL.revokeObjectURL(url);
+    });
+
+    importWeeksInput.addEventListener('change', e=>{
+      const file=e.target.files[0];
+      if(!file) return;
+      const reader=new FileReader();
+      reader.onload=()=>{
+        try{
+          const data=JSON.parse(reader.result);
+          if(!Array.isArray(data.weeks)) throw new Error();
+          localStorage.setItem(WEEK_KEY, JSON.stringify(data.weeks));
+          if(typeof data.fund==='number') fund.value=data.fund;
+          if(typeof data.companies==='number') companies.value=data.companies;
+          refreshDashboard(); renderWeeks(); drawFundChart();
+          alert('Histórico importado com sucesso.');
+        }catch(err){ alert('Arquivo de histórico inválido.'); }
+      };
+      reader.readAsText(file);
+    });
+
+    window.addEventListener('resize', drawFundChart);
+    renderWeeks();
+    drawFundChart();
+
 
     // Reset
     document.getElementById('resetBtn').addEventListener('click', ()=>{
